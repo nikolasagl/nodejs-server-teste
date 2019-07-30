@@ -1,12 +1,17 @@
 const express = require('express')
 const requireDir = require('require-dir')
+const authMiddleware = require('./middlewares/auth')
 
 const routes = express.Router()
 
-requireDir('./models')
-controllers = requireDir('./controllers')
+const controllers = requireDir('./controllers')
+
+routes.post('/login', controllers.AuthController.login)
+
+routes.post('/register', controllers.UserController.create)
+
+routes.use(authMiddleware)
 
 routes.get('/users', controllers.UserController.index)
-routes.post('/login', controllers.UserController.login)
 
 module.exports = routes

@@ -1,16 +1,12 @@
 const express = require('express')
-const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
+const router = require('./src/routes')
 
-// Iniciando App
 const app = express()
-app.use(express.json())
 
-// Iniciando DB
-mongoose.connect(
-  'mongodb://localhost:27017/fmiapi',
-  { useNewUrlParser: true }
-)
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
 
-app.use('/api', require('./src/routes'))
+app.use('/api', router)
 
 app.listen(3001)

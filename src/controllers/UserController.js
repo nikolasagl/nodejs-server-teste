@@ -1,5 +1,4 @@
-const mongoose = require('mongoose')
-
+const mongoose = require('../database')
 const User = mongoose.model('User')
 
 module.exports = {
@@ -10,11 +9,24 @@ module.exports = {
     return res.json(users)
   },
 
-  async login(req, res) {
+  async create(req, res) {
     const data = req.body
 
-    const user = await User.findOne({ name: data.username, password: data.password })
+    try {
+      if (await User.findOne({ email: data.email }))
+        return res.status(400).send({ error: 'User already exists!' })
 
-    return res.json(user)
+
+      const user = await User.create(req.body)
+
+      user.password = undefined
+
+      return res.json({
+        user,
+        token: user.generateToken()
+      })
+    } catch (err) {
+      return res.status(400).send({ error: 'Registration Failed!' })
+    }
   }
 }
